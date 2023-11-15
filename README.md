@@ -1,6 +1,6 @@
 # Caculator
 
-A simple calculator that is switchable between Arabic and English.
+A simple calculator that is switchable between Arabic and English made using react js.
 
 - Used i18next for localization.
 - Used useSound to add a click sound to language switch button.
