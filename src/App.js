@@ -1,6 +1,11 @@
 
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 import './App.css';
+
+
+import { useTranslation, Trans } from "react-i18next";
+import Cookies from 'js-cookie';
+
 
 import DigitButton from './Common/Components/DigitButton/DigitButton';
 import OperationButton from './Common/Components/OperationButton/OperationButton';
@@ -115,6 +120,7 @@ function evaluate({ currentOperand, previousOperand, operation }) {
       computation = prev / current
       break;
   }
+  // console.log(computation)
   return computation.toString()
 }
 
@@ -130,18 +136,47 @@ function formatOperand(operand) {
   return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
 
+
+
+
 function App() {
+  const currentLanguageCode = Cookies.get('i18next') || 'en';
+  const { t, i18n } = useTranslation();
+
+  function numSplit(num) {
+    return String(num).split("").map(String);
+  }
+
+  function numConversion(ArToEn) {
+    let convertedNum = []
+    const currentLanguageCode = Cookies.get('i18next') || 'en';
+    if (currentLanguageCode === 'ar' && ArToEn != null) {
+      convertedNum = numSplit(ArToEn).map((n) => t(n, { lng: 'ar' }))
+      return convertedNum.map(String);
+    } else {
+      return ArToEn;
+    }
+  }
+
+
+  useEffect(() => {
+    document.body.dir = currentLanguageCode === 'ar' ? 'rtl' : 'ltr';
+  }, [currentLanguageCode])
+
+
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(reducer, {})
 
   return (
     <div className='calculator-grid'>
       <div className='output'>
-        <div className='previous-operand'>{formatOperand(previousOperand)} {operation}</div>
-        <div className='current-operand'>{formatOperand(currentOperand)}</div>
+        {console.log(numConversion("١٢٧"))}
+        <div className='previous-operand'>{numConversion(formatOperand(previousOperand))} {operation}</div>
+        <div className='current-operand'>{numConversion(formatOperand(currentOperand))}</div>
+        {/* <div className='previous-operand'>{t(formatOperand(previousOperand))} {t(operation)}</div>
+        <div className='current-operand'>{t(formatOperand(currentOperand))}</div> */}
       </div>
-      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.CLEAR })}>AC</button>
-      <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>DEL</button>
-      {/* <button>÷</button> */}
+      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.CLEAR })}>{t("AC")}</button>
+      <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>{t("DEL")}</button>
       <OperationButton operation="÷" dispatch={dispatch}></OperationButton>
       <DigitButton digit="1" dispatch={dispatch}></DigitButton>
       <DigitButton digit="2" dispatch={dispatch}></DigitButton>
@@ -159,7 +194,26 @@ function App() {
       <DigitButton digit="0" dispatch={dispatch}></DigitButton>
 
       <button className='span-two' onClick={() => dispatch({ type: ACTIONS.EVALUATE })}>=</button>
-    </div>
+      {i18n.language === "en" ?
+        <button
+          onClick={() => {
+            i18n.changeLanguage('ar');
+          }
+          }
+          className='span-four'
+        >
+          {t("en")}
+        </button>
+        :
+        <button
+          onClick={() => {
+            i18n.changeLanguage('en');
+          }
+          }
+          className='span-four'
+        >
+          {t("en")}
+        </button>}    </div>
   );
 }
 
