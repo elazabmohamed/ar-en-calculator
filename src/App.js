@@ -6,6 +6,8 @@ import './App.css';
 import { useTranslation, Trans } from "react-i18next";
 import Cookies from 'js-cookie';
 
+import useSound from 'use-sound';
+import clickSound from './Common/sounds/clickSound.mp3'
 
 import DigitButton from './Common/Components/DigitButton/DigitButton';
 import OperationButton from './Common/Components/OperationButton/OperationButton';
@@ -120,7 +122,6 @@ function evaluate({ currentOperand, previousOperand, operation }) {
       computation = prev / current
       break;
   }
-  // console.log(computation)
   return computation.toString()
 }
 
@@ -135,8 +136,6 @@ function formatOperand(operand) {
   if (decimal == null) return INTEGER_FORMATTER.format(integer)
   return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
-
-
 
 
 function App() {
@@ -166,14 +165,27 @@ function App() {
 
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(reducer, {})
 
+  const [play] = useSound(clickSound);
+
+  const handleArClick = event => {
+    i18n.changeLanguage('ar');
+    play()
+  }
+
+  const handleEnClick = event => {
+    i18n.changeLanguage('en');
+    play()
+  }
+
   return (
+
+
+
     <div className='calculator-grid'>
       <div className='output'>
         {console.log(numConversion("١٢٧"))}
         <div className='previous-operand'>{numConversion(formatOperand(previousOperand))} {operation}</div>
         <div className='current-operand'>{numConversion(formatOperand(currentOperand))}</div>
-        {/* <div className='previous-operand'>{t(formatOperand(previousOperand))} {t(operation)}</div>
-        <div className='current-operand'>{t(formatOperand(currentOperand))}</div> */}
       </div>
       <button className='span-two' onClick={() => dispatch({ type: ACTIONS.CLEAR })}>{t("AC")}</button>
       <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>{t("DEL")}</button>
@@ -193,23 +205,17 @@ function App() {
       <DigitButton digit="." dispatch={dispatch}></DigitButton>
       <DigitButton digit="0" dispatch={dispatch}></DigitButton>
 
-      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.EVALUATE })}>=</button>
+      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.EVALUATE })} >=</button>
       {i18n.language === "en" ?
         <button
-          onClick={() => {
-            i18n.changeLanguage('ar');
-          }
-          }
+          onClick={handleArClick}
           className='span-four'
         >
           {t("en")}
         </button>
         :
         <button
-          onClick={() => {
-            i18n.changeLanguage('en');
-          }
-          }
+          onClick={handleEnClick}
           className='span-four'
         >
           {t("en")}

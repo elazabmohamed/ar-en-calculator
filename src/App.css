@@ -15,7 +15,7 @@ body{
   grid-template-rows: minmax(7rem, auto) repeat(5, 6rem);
 }
 
-.calculator-grid > button{
+/* .calculator-grid > button{
   border-radius: 30px;
   margin: 1px;
   cursor: pointer;
@@ -23,12 +23,12 @@ body{
   border: 1px solid white;
   outline: none;
   background-color: rgba(255,255,255,.75);
-}
+} */
 
-.calculator-grid > button:hover,
+/* .calculator-grid > button:hover,
 .calculator-grid > button:focus{
   background-color: rgba(255,255,255,.9);
-}
+} */
 
 
 .span-two{
@@ -37,6 +37,8 @@ body{
 .span-four{
   height: 4rem;
   grid-column: span 4;
+  margin-top: 5px !important;
+
 }
 
 .output{
@@ -48,6 +50,7 @@ body{
   align-items: flex-end;
   justify-content: space-around;
   padding: .75rem;
+  margin-bottom: 5px;
   word-wrap: break-word;
   word-break: break-all;
   direction: ltr;
@@ -60,4 +63,57 @@ body{
 .output .current-operand{
   color: white;
   font-size: 2.5rem;
+}
+
+/* CSS */
+.calculator-grid > button{
+  border-radius: 30px;
+  margin: 1px;
+  cursor: pointer;
+  font-size: 2rem;
+  border: 1px solid white;
+  outline: none;
+  
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  min-height: 3rem;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  position: relative;
+  text-decoration: none;
+  transition: all 250ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  width: auto;
+}
+
+.calculator-grid > button:hover,
+.calculator-grid > button:focus {
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.calculator-grid > button:hover {
+  transform: translateY(-1px);
+}
+
+.calculator-grid > button:active {
+  background-color: #F0F0F1;
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+  color: rgba(0, 0, 0, 0.65);
+  transform: translateY(0);
 }
