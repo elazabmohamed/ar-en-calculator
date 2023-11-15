@@ -107,7 +107,7 @@ body{
 }
 
 .calculator-grid > button:hover {
-  transform: translateY(-1px);
+  transform: translateY(-4px);
 }
 
 .calculator-grid > button:active {

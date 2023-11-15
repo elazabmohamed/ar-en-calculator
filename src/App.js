@@ -2,7 +2,6 @@
 import { useReducer, useEffect } from 'react';
 import './App.css';
 
-
 import { useTranslation, Trans } from "react-i18next";
 import Cookies from 'js-cookie';
 
@@ -11,6 +10,7 @@ import clickSound from './Common/sounds/clickSound.mp3'
 
 import DigitButton from './Common/Components/DigitButton/DigitButton';
 import OperationButton from './Common/Components/OperationButton/OperationButton';
+import Reducer from './Common/Components/Reducer/Reducer';
 
 export const ACTIONS = {
   ADD_DIGIT: 'add-digit',
@@ -18,111 +18,6 @@ export const ACTIONS = {
   CLEAR: 'clear',
   DELETE_DIGIT: ' delete-digit',
   EVALUATE: 'evaluate'
-}
-
-function reducer(state, { type, payload }) {
-  switch (type) {
-    case ACTIONS.ADD_DIGIT:
-      if (state.overwrite) {
-        return {
-          ...state,
-          currentOperand: payload.digit,
-          overwrite: false,
-        }
-      }
-      if (payload.digit === "0" && state.currentOperand === "0") return state
-      if (payload.digit === "." && state.currentOperand.includes(".")) return state
-
-      return {
-        ...state,
-        currentOperand: `${state.currentOperand || ""}${payload.digit}`,
-      }
-
-    case ACTIONS.CHOOSE_OPERATION:
-      if (state.currentOperand == null && state.previousOperand == null) {
-        return state
-      }
-
-      if (state.currentOperand == null) {
-        return {
-          ...state,
-          operation: payload.operation,
-        }
-      }
-
-      if (state.previousOperand == null) {
-        return {
-          ...state,
-          operation: payload.operation,
-          previousOperand: state.currentOperand,
-          currentOperand: null,
-        }
-      }
-
-      return {
-        ...state,
-        previousOperand: evaluate(state),
-        operation: payload.operation,
-        currentOperand: null
-      }
-
-    case ACTIONS.DELETE_DIGIT:
-      if (state.overwrite) {
-        return {
-          ...state,
-          overwrite: false,
-          currentOperand: null,
-        }
-      }
-      if (state.currentOperand == null) return state
-      if (state.currentOperand.length === 1) {
-        return {
-          ...state,
-          currentOperand: null,
-        }
-      }
-    case ACTIONS.CLEAR:
-      return {}
-
-      return {
-        ...state,
-        currentOperand: state.currentOperand.slice(0, -1)
-      }
-    case ACTIONS.EVALUATE:
-      if (state.operation == null || state.currentOperand == null || state.previousOperand == null) {
-        return state
-      }
-
-      return {
-        ...state,
-        overwrite: true,
-        previousOperand: null,
-        operation: null,
-        currentOperand: evaluate(state),
-      }
-  }
-}
-
-function evaluate({ currentOperand, previousOperand, operation }) {
-  const prev = parseFloat(previousOperand)
-  const current = parseFloat(currentOperand)
-  if (isNaN(prev) || isNaN(current)) return ""
-  let computation = ""
-  switch (operation) {
-    case "+":
-      computation = prev + current
-      break;
-    case "-":
-      computation = prev - current
-      break;
-    case "*":
-      computation = prev * current
-      break;
-    case "÷":
-      computation = prev / current
-      break;
-  }
-  return computation.toString()
 }
 
 const INTEGER_FORMATTER = new Intl.NumberFormat("en-us", {
@@ -148,7 +43,6 @@ function App() {
 
   function numConversion(ArToEn) {
     let convertedNum = []
-    const currentLanguageCode = Cookies.get('i18next') || 'en';
     if (currentLanguageCode === 'ar' && ArToEn != null) {
       convertedNum = numSplit(ArToEn).map((n) => t(n, { lng: 'ar' }))
       return convertedNum.map(String);
@@ -157,13 +51,13 @@ function App() {
     }
   }
 
-
   useEffect(() => {
     document.body.dir = currentLanguageCode === 'ar' ? 'rtl' : 'ltr';
   }, [currentLanguageCode])
 
+  useEffect(() => { document.title = t('calc_title') }, [currentLanguageCode]);
 
-  const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(reducer, {})
+  const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(Reducer, {})
 
   const [play] = useSound(clickSound);
 
@@ -178,12 +72,8 @@ function App() {
   }
 
   return (
-
-
-
     <div className='calculator-grid'>
       <div className='output'>
-        {console.log(numConversion("١٢٧"))}
         <div className='previous-operand'>{numConversion(formatOperand(previousOperand))} {operation}</div>
         <div className='current-operand'>{numConversion(formatOperand(currentOperand))}</div>
       </div>
